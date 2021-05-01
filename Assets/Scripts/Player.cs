@@ -7,15 +7,19 @@ public class Player : MonoBehaviour
     public float jumpForce;
     public LayerMask groundLayers;
     public int maxAirJumps;
+    public GameObject bullet;
+    public Transform shootPoint;
     
     private Rigidbody2D _rb;
 
     private bool _isGrounded;
     private int _airJumpsLeft;
+    private bool _isFacingRight;
     
     private void Awake() {
         _rb = GetComponent<Rigidbody2D>();
         _isGrounded = false;
+        _isFacingRight = true;
     }
 
     private void Update() {
@@ -32,6 +36,19 @@ public class Player : MonoBehaviour
                     _airJumpsLeft--;
                 }
             }
+        }
+
+        if (horizontal > 0f) _isFacingRight = true;
+        if (horizontal < 0f) _isFacingRight = false;
+
+        if (_isFacingRight) transform.localScale = Vector3.one;
+        else transform.localScale = new Vector3(-1f, 1f, 1f);
+        
+        if (Input.GetMouseButtonDown(0)) {
+            // create a bullet
+            GameObject b = Instantiate(bullet, shootPoint.position, Quaternion.identity);
+            // make the face the right direction
+            if (!_isFacingRight) b.transform.localEulerAngles = new Vector3(0f, 180f, 0f);
         }
     }
 
